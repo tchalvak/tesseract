@@ -7,12 +7,8 @@ clean:
 build: nginx phantomjs
 
 
-nginx:
-	wget http://nginx.org/download/nginx-1.9.12.tar.gz
-	tar -xvf nginx-1.9.12.tar.gz
-	cd nginx-1*
-	./configure
-	$(MAKE) -C ./
+nginx: 
+	touch conf/error.log conf/access.log
 
 nginx-start:
 	touch conf/error.log conf/access.log
