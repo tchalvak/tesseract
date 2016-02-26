@@ -1,0 +1,15 @@
+server {
+    listen 80;
+    server_name tesseract.local;
+
+    root /srv/tesseract/www;
+
+    autoindex on;
+
+    index index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+}
