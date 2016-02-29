@@ -2,7 +2,7 @@
 default:	build
 
 clean:
-	rm -rf nginx-1* phantomjs-2*
+	rm -rf nginx-1* phantomjs-2* tests/bin/phantomjs tests/output/*
 
 build: nginx phantomjs
 
@@ -17,11 +17,16 @@ nginx-start:
 	./nginx-1*/objs/nginx -c ./conf/nginx.conf &> /dev/null
 
 phantomjs:
-	wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
-	tar -xvf phantomjs-2.1.1-linux-x86_64.tar.bz2
-	mkdir -p tests/bin/
-	mkdir -p tests/output/
-	mv phantomjs-2.1.1-linux-x86_64/bin/phantomjs tests/bin/phantomjs
+	ifneq ("$(wildcard $(PHANTOMPATH))","")
+		FILE_EXISTS = 1
+	else
+		FILE_EXISTS = 0
+		wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
+		tar -xvf phantomjs-2.1.1-linux-x86_64.tar.bz2
+		mkdir -p tests/bin/
+		mkdir -p tests/output/
+		mv phantomjs-2.1.1-linux-x86_64/bin/phantomjs ${PHANTOMPATH}
+	endif
 
 test:
 	./tests/bin/phantomjs ./tests/loadpage.js
