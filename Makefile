@@ -1,3 +1,5 @@
+.PHONY: deps clean nginx phantomjs test nodeserver
+
 DOMAIN=http://tesseract.local
 PHANTOMPATH=tests/bin/phantomjs
 
@@ -6,10 +8,12 @@ PHANTOMPATH=tests/bin/phantomjs
 default:	build
 
 clean:
-	rm -rf nginx-1* phantomjs-2* tests/bin/phantomjs tests/output/*
+	rm -rf nginx-1* phantomjs-2* tests/bin/phantomjs tests/output/* vendor/*
 
-build: nginx tests/bin/phantomjs
+build: deps nginx tests/bin/phantomjs build-node-deps
 
+deps:
+	mkdir -p vendor
 
 nginx: 
 	touch conf/error.log conf/access.log
@@ -23,22 +27,22 @@ nginx-start:
 phantomjs: tests/bin/phantomjs
 
 tests/bin/phantomjs:
-	wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
-	tar -xvf phantomjs-2.1.1-linux-x86_64.tar.bz2
+	mkdir -p vendor
+	wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 -P ./vendor
+	tar -xvf ./vendor/phantomjs-2.1.1-linux-x86_64.tar.bz2 -C ./vendor/
 	mkdir -p tests/bin/
 	mkdir -p tests/output/
-	mv phantomjs-2.1.1-linux-x86_64/bin/phantomjs ${PHANTOMPATH}
+	ln -s ../../vendor/phantomjs-2.1.1-linux-x86_64/bin/phantomjs ${PHANTOMPATH}
 
 test:
 	./tests/bin/phantomjs ./tests/loadpage.js
+	jasmine
 
 
 build-node-deps:
 	npm install -g phantomjs-prebuilt
 	npm install -g jasmine
 	npm install phantom-jasmine -g
-
-
 
 nodeserver:
 	npm install --save http-server
